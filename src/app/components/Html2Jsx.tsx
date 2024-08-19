@@ -2,12 +2,15 @@
 import React, {useEffect, useState} from "react";
 
 
-const Html2Jsx = ({transformer}: {transformer: ({html, useCx}: {html: string, useCx:boolean}) => Promise<string>}) => {
+const Html2Jsx = ({transformer}: {transformer: ({html, cxName}: {html: string, cxName:string}) => Promise<string>}) => {
     const [inputHtml, setInputHtml] = useState('')
     const [outputHtml, setOutputHtml] = useState('')
-    const [useCx, setUseCx] = useState(false)
+    const [cxName, setCxName] = useState('cx')
     const handleInputHtml = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
         setInputHtml(e.target.value)
+    }
+    const handleCxName = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        setCxName(e.target.value)
     }
     useEffect(() => {
         async function transform() {
@@ -15,7 +18,7 @@ const Html2Jsx = ({transformer}: {transformer: ({html, useCx}: {html: string, us
 
                 const result = await transformer({
                     html:inputHtml,
-                    useCx
+                    cxName
                 });
                 setOutputHtml(result)
 
@@ -27,12 +30,12 @@ const Html2Jsx = ({transformer}: {transformer: ({html, useCx}: {html: string, us
 
         transform();
 
-    }, [inputHtml, transformer, useCx]);
+    }, [cxName, inputHtml, transformer]);
 
     return (
         <>
-            <label htmlFor={'checkbox'}> 클래스 네임 사용 여부
-            <input name={'checkbox'} type={'checkbox'} checked={useCx} onChange={() => {setUseCx((prev) => !prev)}}/>
+            <label htmlFor={'cxName'}> prefix
+            <input name={'cxName'} value={cxName} onChange={handleCxName} className={'text-black'} />
             </label>
         <div className={'flex mt-4 justify-evenly'}>
             <textarea value={inputHtml} onChange={handleInputHtml} className={'w-1/3 color text-black h-[50vh]'} defaultValue={inputHtml}/>
